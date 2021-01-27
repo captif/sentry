@@ -59,16 +59,16 @@ pub fn sentry_main(
 ) -> Result<()> {
 
     eprintln!("sentry coming up");
-    let identity = carrier::config::load().unwrap().secret.identity().to_string();
+    let identity = carrier::config::load().expect("carrier::config::load").secret.identity().to_string();
 
-    let mut genesis = carrier::config::persistence_dir().join("genesis/current.toml");
+    let mut genesis : std::path::PathBuf = "/etc/config/genesis/current.json".into();
     if !genesis.exists() {
-        genesis = carrier::config::persistence_dir().join("genesis/stable.toml");
+        genesis = "/etc/config/genesis/stable.json".into();
     }
     let mut f = File::open(genesis).or_else(dead)?;
     let mut s = Vec::new();
     f.read_to_end(&mut s).or_else(dead).unwrap();
-    let config : config::Genesis = toml::de::from_slice(&s).or_else(dead)?;
+    let config : config::Genesis = serde_json::de::from_slice(&s).or_else(dead)?;
 
     println!("{:?}", config);
     let config = match config.captif {
