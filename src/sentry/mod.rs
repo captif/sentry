@@ -5,6 +5,7 @@ mod proxy;
 mod service;
 mod ubus;
 mod config;
+mod access_control;
 
 use errors::*;
 use sentry::sentry::Sentry;
@@ -109,6 +110,17 @@ pub fn sentry_main(
             .bind_connection(&evt_loop_handle, socket, addr, sentry_service);
         Ok(())
     });
+
+    if let Some(expires) = config.expires {
+        std::thread::spawn(move || {
+            loop {
+                access_control::check_for_expired(expires.into()).unwrap();
+                std::thread::sleep(std::time::Duration::from_secs(10));
+            }
+        });
+    }
+
+
 
     evt_loop
         .run(server)

@@ -34,6 +34,9 @@ pub fn request(
     headers: &Headers,
     ignore_headers: &[&str],
 ) -> Result {
+
+    eprintln!("r: {}", inc_uri);
+
     let mut out_req = client::Request::new(inc_method.to_owned(), inc_uri.to_owned());
 
     for header in headers.iter() {

@@ -80,8 +80,8 @@ fn read_valid_time() -> Duration {
 /// # Arguments
 ///
 /// `valid_time` - The time it takes until an access is expired.
-pub fn check_for_expired(valid_time: Option<Duration>) -> Result<()> {
-    let valid_time = valid_time.unwrap_or_else(read_valid_time);
+pub fn check_for_expired(valid_time: i64) -> Result<()> {
+    let valid_time = Duration::seconds(valid_time);
 
     let ipt = iptables::new(false).unwrap();
 
@@ -91,6 +91,7 @@ pub fn check_for_expired(valid_time: Option<Duration>) -> Result<()> {
     for rule in rules {
         if let Some(rule) = Rule::parse(&rule) {
             if rule.is_expired(valid_time) {
+                eprintln!(" session expired: {}", rule.mac_source);
                 ipt.delete(IPT_TABLE, IPT_CHAIN, &rule.to_string())
                     .chain_err(|| format!("Error deleting rule: {}", rule.to_string()))?;
             }

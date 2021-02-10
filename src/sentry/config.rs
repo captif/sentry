@@ -1,6 +1,7 @@
 #[derive(Deserialize, Debug)]
 pub struct Captif {
-    pub url: String
+    pub url: String,
+    pub expires: Option<u32>,
 }
 
 #[derive(Deserialize, Debug)]

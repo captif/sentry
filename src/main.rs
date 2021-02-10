@@ -28,10 +28,8 @@ extern crate tokio_proto;
 pub mod errors;
 mod sentry;
 mod time_control;
-mod access_control;
 
 pub use sentry::sentry_main;
-pub use access_control::check_for_expired;
 pub use time_control::check_public_wifi;
 pub use time_control::TimeControl;
 pub use time_control::PUBLIC_WIFI_TIME_CONTROL_PATH;
